@@ -16,6 +16,7 @@ const ChatLayout = ({ children }) => {
     const [showGroupModal, setShowGroupModal] = useState(false);
     const { on, emit } = useEventBus();
     const isUserOnline = (userId) => onlineUsers[userId];
+    const currentUserId = page.props.auth.user.id;
 
     const onSearch = (ev) => {
         const search = ev.target.value.toLowerCase();
@@ -52,9 +53,12 @@ const ChatLayout = ({ children }) => {
             });
         });
 
-        
         if (Notification.permission === "granted") {
-            new Notification("New message", {
+            const isSender = message.sender_id === currentUserId;
+            const title = isSender ? "New message sent" : "New message received";
+            const body = message.message;
+
+            new Notification(title, {
                 body: message.message,
             });
         }
@@ -80,7 +84,6 @@ const ChatLayout = ({ children }) => {
             Notification.requestPermission();
         }
 
-        
         Echo.channel(`user.${page.props.auth.user.id}`)
             .listen('NewMessageNotification', (event) => {
                 showNotification(event.message.message);

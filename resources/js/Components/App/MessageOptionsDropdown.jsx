@@ -1,29 +1,25 @@
-import {Menu, MenuButton, MenuItem, MenuItems, Transition} from "@headlessui/react";
-import {
-    EllipsisVerticalIcon,
-    LockClosedIcon,
-    LockOpenIcon,
-    ShieldCheckIcon,
-    TrashIcon,
-    UserIcon
-} from "@heroicons/react/24/solid/index.js";
+import {Menu, MenuButton, MenuItems, Transition} from "@headlessui/react";
+import {EllipsisVerticalIcon, TrashIcon} from "@heroicons/react/24/solid/index.js";
 import axios from "axios";
 import {Fragment} from "react";
 import {useEventBus} from "@/EventBus.jsx";
 
-export default function MessageOptionsDropdown({ message }){
+export default function MessageOptionsDropdown({ message }) {
 
-    const { emit } = useEventBus()
+    const { emit } = useEventBus();
+
     const onMessageDelete = () => {
-        console.log("delete message")
-        axios.delete(route('message.destroy', message.id))
-            .then((res) => {
-               emit("message.deleted", {message, prevMessage : res.data.message});
-            })
-            .catch((err) => {
-                console.error(err)
-            })
-    }
+        if (confirm("Are you sure you want to delete this message?")) {
+            console.log("delete message");
+            axios.delete(route('message.destroy', message.id))
+                .then((res) => {
+                    emit("message.deleted", { message, prevMessage: res.data.message });
+                })
+                .catch((err) => {
+                    console.error(err);
+                });
+        }
+    };
 
     return (
         <div className="absolute right-full text-gray-100 top-1/2 -translate-y-1/2 z-10">
@@ -42,8 +38,8 @@ export default function MessageOptionsDropdown({ message }){
                     leaveFrom="transform opacity-100 scale-100"
                     leaveTo="transform opacity-0 scale-95"
                 >
-                    <MenuItems className="absolute left-0 mt-2 w-48  rounded-md bg-gray-800 shadow-lg z-[100]">
-                        <div className="px-1 py-1 ">
+                    <MenuItems className="absolute left-0 mt-2 w-48 rounded-md bg-gray-800 shadow-lg z-[100]">
+                        <div className="px-1 py-1">
                             <MenuItems>
                                 {({ active }) => (
                                     <button
@@ -63,5 +59,4 @@ export default function MessageOptionsDropdown({ message }){
             </Menu>
         </div>
     );
-
 }

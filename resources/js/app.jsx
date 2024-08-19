@@ -11,7 +11,6 @@ const appName = import.meta.env.VITE_APP_NAME || 'Laravel';
 
 function AppWithNotifications({ el, App, props }) {
     useEffect(() => {
-        // Request notification permission when the app mounts
         if ('Notification' in window) {
             Notification.requestPermission().then(permission => {
                 if (permission === 'granted') {
@@ -25,9 +24,8 @@ function AppWithNotifications({ el, App, props }) {
 
     function showNotification(message) {
         if (Notification.permission === 'granted') {
-            new Notification('New Message', {
+            new Notification('New Notification', {
                 body: message,
-                icon: 'path/to/icon.png',
             });
         }
     }
@@ -35,7 +33,7 @@ function AppWithNotifications({ el, App, props }) {
     // Example function to simulate receiving a new message
     function simulateNewMessage() {
         // Call this function when you receive a new message
-        showNotification('You have a new message!');
+        showNotification('Welcome Aboard');
     }
 
     // Simulate receiving a new message after 5 seconds
