@@ -52,10 +52,11 @@ const ChatLayout = ({ children }) => {
             });
         });
 
-        
+        // Show notification if permission is granted
         if (Notification.permission === "granted") {
             new Notification("New message", {
                 body: message.message,
+                // Optionally add other properties like icon or tag
             });
         }
     };
@@ -76,6 +77,7 @@ const ChatLayout = ({ children }) => {
     };
 
     useEffect(() => {
+        // Request permission to show notifications
         if (Notification.permission === "default") {
             Notification.requestPermission();
         }

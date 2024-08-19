@@ -76,6 +76,7 @@ const ChatLayout = ({ children }) => {
     };
 
     useEffect(() => {
+        // Request permission to show notifications
         if (Notification.permission === "default") {
             Notification.requestPermission();
         }

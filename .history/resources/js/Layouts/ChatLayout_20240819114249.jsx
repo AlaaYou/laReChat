@@ -52,10 +52,11 @@ const ChatLayout = ({ children }) => {
             });
         });
 
-        
+        // Show notification if permission is granted
         if (Notification.permission === "granted") {
             new Notification("New message", {
                 body: message.message,
+                // Optionally add other properties like icon or tag
             });
         }
     };
@@ -71,16 +72,18 @@ const ChatLayout = ({ children }) => {
         if (Notification.permission === "granted") {
             new Notification("New message", {
                 body: message,
+                // Optionally add other properties like icon or tag
             });
         }
     };
 
     useEffect(() => {
+        // Request permission to show notifications
         if (Notification.permission === "default") {
             Notification.requestPermission();
         }
 
-        
+        // Set up Echo listeners
         Echo.channel(`user.${page.props.auth.user.id}`)
             .listen('NewMessageNotification', (event) => {
                 showNotification(event.message.message);

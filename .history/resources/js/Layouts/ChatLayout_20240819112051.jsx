@@ -52,10 +52,11 @@ const ChatLayout = ({ children }) => {
             });
         });
 
-        
-        if (Notification.permission === "granted") {
-            new Notification("New message", {
+        // Display a notification for the new message
+        if (Notification.permission === 'granted') {
+            new Notification('New Message', {
                 body: message.message,
+                icon: 'path/to/icon.png', // Optional: Add an icon for the notification
             });
         }
     };
@@ -67,24 +68,11 @@ const ChatLayout = ({ children }) => {
         messageCreated(prevMessage);
     };
 
-    const showNotification = (message) => {
-        if (Notification.permission === "granted") {
-            new Notification("New message", {
-                body: message,
-            });
-        }
-    };
-
     useEffect(() => {
-        if (Notification.permission === "default") {
+        // Request notification permission when the component mounts
+        if (Notification.permission === 'default') {
             Notification.requestPermission();
         }
-
-        
-        Echo.channel(`user.${page.props.auth.user.id}`)
-            .listen('NewMessageNotification', (event) => {
-                showNotification(event.message.message);
-            });
 
         const offCreated = on('message.created', messageCreated);
         const offDeleted = on('message.deleted', messageDeleted);
@@ -111,7 +99,7 @@ const ChatLayout = ({ children }) => {
             offModalShow();
             offGroupDelete();
         };
-    }, [on]);
+    }, [on, router, emit, selectedConversation]);
 
     useEffect(() => {
         setSortedConversations(
@@ -146,7 +134,8 @@ const ChatLayout = ({ children }) => {
         Echo.join('online')
             .here((users) => {
                 const onlineUsersObj = Object.fromEntries(
-                    users.map((user) => [user.id, user]));
+                    users.map((user) => [user.id, user])
+                );
 
                 setOnlineUsers((previousOnlineUsers) => {
                     return { ...previousOnlineUsers, ...onlineUsersObj };
@@ -194,7 +183,6 @@ const ChatLayout = ({ children }) => {
                             onKeyUp={onSearch}
                             placeholder="Filter Users"
                             className="w-full">
-
                         </TextInput>
                     </div>
                     <div className="flex-1 overflow-auto">

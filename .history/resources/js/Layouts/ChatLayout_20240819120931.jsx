@@ -23,42 +23,41 @@ const ChatLayout = ({ children }) => {
             return conversation.name.toLowerCase().includes(search);
         }));
     };
-
-    const messageCreated = (message) => {
-        setLocalConversations((oldUsers) => {
-            return oldUsers.map((u) => {
-                if (
-                    message.receiver_id &&
-                    !u.is_group &&
-                    (u.id == message.sender_id || u.id == message.receiver_id)
-                ) {
-                    u.last_message = message.message;
-                    u.last_message_date = message.created_at;
-                    return u;
-                }
-
-                // If the message is for a group
-                if (
-                    message.group_id &&
-                    u.is_group &&
-                    u.id == message.group_id
-                ) {
-                    u.last_message = message.message;
-                    u.last_message_date = message.created_at;
-                    return u;
-                }
-
+const messageCreated = (message) => {
+    setLocalConversations((oldUsers) => {
+        return oldUsers.map((u) => {
+            if (
+                message.receiver_id &&
+                !u.is_group &&
+                (u.id == message.sender_id || u.id == message.receiver_id)
+            ) {
+                u.last_message = message.message;
+                u.last_message_date = message.created_at;
                 return u;
-            });
-        });
+            }
 
-        
-        if (Notification.permission === "granted") {
-            new Notification("New message", {
-                body: message.message,
-            });
-        }
-    };
+            // for a group
+            if (
+                message.group_id &&
+                u.is_group &&
+                u.id == message.group_id
+            ) {
+                u.last_message = message.message;
+                u.last_message_date = message.created_at;
+                return u;
+            }
+
+            return u;
+        });
+    });
+
+    // Show notification only if the message is received
+    if (Notification.permission === "granted" && message.receiver_id === page.props.auth.user.id) {
+        new Notification("New message", {
+            body: message.message,
+        });
+    }
+};
 
     const messageDeleted = ({ prevMessage }) => {
         if (!prevMessage) {

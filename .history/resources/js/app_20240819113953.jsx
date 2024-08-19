@@ -32,11 +32,6 @@ function AppWithNotifications({ el, App, props }) {
         }
     }
 
-    // Example function to simulate receiving a new message
-    function simulateNewMessage() {
-        // Call this function when you receive a new message
-        showNotification('You have a new message!');
-    }
 
     // Simulate receiving a new message after 5 seconds
     useEffect(() => {

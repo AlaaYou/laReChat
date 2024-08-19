@@ -36,8 +36,8 @@ const ChatLayout = ({ children }) => {
                     u.last_message_date = message.created_at;
                     return u;
                 }
-
-                // If the message is for a group
+    
+                // for a group
                 if (
                     message.group_id &&
                     u.is_group &&
@@ -47,14 +47,14 @@ const ChatLayout = ({ children }) => {
                     u.last_message_date = message.created_at;
                     return u;
                 }
-
+    
                 return u;
             });
         });
-
-        
-        if (Notification.permission === "granted") {
-            new Notification("New message", {
+    
+        // Show notification only if the message is received
+        if (Notification.permission === "granted" && message.receiver_id === page.props.auth.user.id) {
+            new Notification("New message Received", {
                 body: message.message,
             });
         }

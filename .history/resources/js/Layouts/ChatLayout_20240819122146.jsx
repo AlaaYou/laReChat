@@ -5,6 +5,7 @@ import { PencilSquareIcon } from "@heroicons/react/16/solid/index.js";
 import ConversationItem from "@/Components/App/ConversationItem.jsx";
 import { useEventBus } from "@/EventBus.jsx";
 import GroupModal from "@/Components/App/GroupModal.jsx";
+import PushNotification from "@/Components/PushNotification.jsx";
 
 const ChatLayout = ({ children }) => {
     const page = usePage();
@@ -37,7 +38,7 @@ const ChatLayout = ({ children }) => {
                     return u;
                 }
 
-                // If the message is for a group
+                // for a group
                 if (
                     message.group_id &&
                     u.is_group &&
@@ -52,12 +53,8 @@ const ChatLayout = ({ children }) => {
             });
         });
 
-        
-        if (Notification.permission === "granted") {
-            new Notification("New message", {
-                body: message.message,
-            });
-        }
+        // Show push notification
+        emit('pushNotification.show', message.message);
     };
 
     const messageDeleted = ({ prevMessage }) => {
@@ -80,7 +77,6 @@ const ChatLayout = ({ children }) => {
             Notification.requestPermission();
         }
 
-        
         Echo.channel(`user.${page.props.auth.user.id}`)
             .listen('NewMessageNotification', (event) => {
                 showNotification(event.message.message);
@@ -105,11 +101,15 @@ const ChatLayout = ({ children }) => {
             }
         });
 
+        // Listen for push notification events
+        const offPushNotification = on('pushNotification.show', showNotification);
+
         return () => {
             offCreated();
             offDeleted();
             offModalShow();
             offGroupDelete();
+            offPushNotification();
         };
     }, [on]);
 
@@ -175,6 +175,7 @@ const ChatLayout = ({ children }) => {
 
     return (
         <>
+            <PushNotification />
             <div className="flex-1 w-full flex overflow-hidden">
                 <div className={`transition-all w-full sm:w-[220px] md:w-[300px] bg-slate-800
                 flex-col flex overflow-hidden ${selectedConversation ? '-ml-[100%] sm:ml-0' : ''}`}>
@@ -193,9 +194,8 @@ const ChatLayout = ({ children }) => {
                         <TextInput
                             onKeyUp={onSearch}
                             placeholder="Filter Users"
-                            className="w-full">
-
-                        </TextInput>
+                            className="w-full"
+                        />
                     </div>
                     <div className="flex-1 overflow-auto">
                         {sortedConversations && sortedConversations.map((conversation) => (
@@ -203,8 +203,8 @@ const ChatLayout = ({ children }) => {
                                 key={`${conversation.is_group ? "group_" : "user_"}${conversation.id}`}
                                 conversation={conversation}
                                 online={!!isUserOnline(conversation.id)}
-                                selectedConversation={selectedConversation}>
-                            </ConversationItem>
+                                selectedConversation={selectedConversation}
+                            />
                         ))}
                     </div>
                 </div>

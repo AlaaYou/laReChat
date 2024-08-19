@@ -52,9 +52,12 @@ const ChatLayout = ({ children }) => {
             });
         });
 
-        
+        // Get the sender's name
+        const senderName = page.props.users.find(user => user.id === message.sender_id)?.name || "Unknown";
+
+        // Show notification if permission is granted
         if (Notification.permission === "granted") {
-            new Notification("New message", {
+            new Notification(`New message from ${senderName}`, {
                 body: message.message,
             });
         }
@@ -67,9 +70,9 @@ const ChatLayout = ({ children }) => {
         messageCreated(prevMessage);
     };
 
-    const showNotification = (message) => {
+    const showNotification = (message, senderName) => {
         if (Notification.permission === "granted") {
-            new Notification("New message", {
+            new Notification(`New message from ${senderName}`, {
                 body: message,
             });
         }
@@ -80,10 +83,10 @@ const ChatLayout = ({ children }) => {
             Notification.requestPermission();
         }
 
-        
         Echo.channel(`user.${page.props.auth.user.id}`)
             .listen('NewMessageNotification', (event) => {
-                showNotification(event.message.message);
+                const senderName = page.props.users.find(user => user.id === event.message.sender_id)?.name || "Unknown";
+                showNotification(event.message.message, senderName);
             });
 
         const offCreated = on('message.created', messageCreated);

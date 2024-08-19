@@ -37,7 +37,7 @@ const ChatLayout = ({ children }) => {
                     return u;
                 }
 
-                // If the message is for a group
+                // for a group
                 if (
                     message.group_id &&
                     u.is_group &&

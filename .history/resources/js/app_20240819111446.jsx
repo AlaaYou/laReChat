@@ -27,7 +27,7 @@ function AppWithNotifications({ el, App, props }) {
         if (Notification.permission === 'granted') {
             new Notification('New Message', {
                 body: message,
-                icon: 'path/to/icon.png',
+                icon: 'path/to/icon.png', // Optional: Add an icon for the notification
             });
         }
     }
