@@ -35,3 +35,6 @@
 - Edit or delete groups
 - Update your own profile details: Name, email, password, or profile picture
 - Fully responsive UI working on all devices
+
+### Done At 20/08/2024
+@Special thanks to Web Vue For All Support.
